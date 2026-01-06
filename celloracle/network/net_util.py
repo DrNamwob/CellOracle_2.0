@@ -23,7 +23,12 @@ import pandas as pd
 from ..utility import load_pickled_object
 from .net_core import Net
 
-from velocyto.serialization import dump_hdf5, load_hdf5
+from ..utility.hdf5_processing import dump_hdf5, load_hdf5
+
+# DB commented this out on January 6, 2026. Kamimoto eventually copied the velocyto.serialization code directly into the 
+# utility/hdf5_processing.py file. 
+
+#from velocyto.serialization import dump_hdf5, load_hdf5
 
 ##############################
 ### 1.  define main class  ###
