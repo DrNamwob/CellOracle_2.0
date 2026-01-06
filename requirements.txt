@@ -19,6 +19,6 @@ scanpy>=1.6
 joblib
 goatools
 genomepy>=0.8.4
-gimmemotifs==0.18.0
+#gimmemotifs==0.18.0
 #gimmemotifs>=0.14.4, <=0.17.2
 anndata<=0.10.8

@@ -1,15 +1,14 @@
 # Copied from Velocyto's repository to avoid dependency issues.
 # https://github.com/velocyto-team/velocyto.py/blob/master/velocyto/estimation.py
 
-
 import numpy as np
 import scipy.optimize
 from scipy import sparse
 import logging
 from typing import *
 from sklearn.neighbors import NearestNeighbors
-from .speedboosted import _colDeltaCor, _colDeltaCorLog10, _colDeltaCorSqrt
-from .speedboosted import _colDeltaCorpartial, _colDeltaCorLog10partial, _colDeltaCorSqrtpartial
+# from .speedboosted import _colDeltaCor, _colDeltaCorLog10, _colDeltaCorSqrt
+# from .speedboosted import _colDeltaCorpartial, _colDeltaCorLog10partial, _colDeltaCorSqrtpartial
 
 
 def colDeltaCor(emat: np.ndarray, dmat: np.ndarray, threads: int=None) -> np.ndarray:
@@ -391,3 +390,5 @@ def clusters_stats(U: np.ndarray, S: np.ndarray,
             U_avgs[:, i], S_avgs[:, i] = U.mean(1), S.mean(1)
             
     return U_avgs, S_avgs
+    
+

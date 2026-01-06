@@ -7,7 +7,7 @@ import numpy as np
 from typing import Dict, Any, List, Union, Tuple
 import pandas as pd
 import scipy.stats
-from numba import jit, 
+from numba import jit
 from scipy import sparse
 from scipy.spatial.distance import pdist, squareform
 from scipy.stats import norm as normal
@@ -38,7 +38,7 @@ from .neighbors import (BalancedKNN, connectivity_to_weights,
 #from tqdm.auto import tqdm
 from .oracle_utility import _adata_to_matrix, _adata_to_df, _get_clustercolor_from_anndata
 
-from celloracle.DB_Additions.velocyto_files.velocyto_estimation import (colDeltaCor, colDeltaCorpartial)
+#from celloracle.DB_Additions.velocyto_files.velocyto_estimation import (colDeltaCor, colDeltaCorpartial)
                         
 
 from celloracle.DB_Additions.velocyto_files.velocyto_diffusion import Diffusion
@@ -47,8 +47,8 @@ from celloracle.DB_Additions.velocyto_files.velocyto_diffusion import Diffusion
 from celloracle.DB_Additions.velocyto_files.DB_velocyto_speedboost_python import (colDeltaCor_numpy, colDeltaCorpartial_numpy)
 
 
-_colDeltaCor = colDeltaCor_numpy
-_colDeltaCorpartial = colDeltaCorpartial_numpy
+colDeltaCor = colDeltaCor_numpy
+colDeltaCorpartial = colDeltaCorpartial_numpy
 
 
 class modified_VelocytoLoom():
