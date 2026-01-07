@@ -284,7 +284,7 @@ class modified_VelocytoLoom():
                                  sampling_probs: Tuple[float, float]=(0.5, 0.1),
                                  n_jobs: int=4, threads: int=None, calculate_randomized: bool=True,
                                  random_seed: int=15071990, cell_idx_use=None) -> None:
-        """Use correlation to estimate transition probabilities for every cells to its embedding neighborhood
+        """Use correlation to estimate transition probabilities for every cell to its embedding neighborhood
 
         Arguments
         ---------
@@ -351,7 +351,7 @@ class modified_VelocytoLoom():
                                                                            n_neighbors=n_neighbors,
                                                                            n_jobs=n_jobs)
 
-            # Pick random neighbours and prune the rest
+            # Pick random neighbors and prune the rest
             neigh_ixs = self.embedding_knn.indices.reshape((-1, n_neighbors + 1))
             p = np.linspace(sampling_probs[0], sampling_probs[1], neigh_ixs.shape[1])
             p = p / p.sum()

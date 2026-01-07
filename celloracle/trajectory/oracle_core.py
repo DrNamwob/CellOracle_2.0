@@ -820,6 +820,7 @@ class Oracle(modified_VelocytoLoom, Oracle_visualization):
         # 2. load gene expression matrix (initiation information for the simulation)
         gem_imputed = _adata_to_df(self.adata, "imputed_count")
 
+        print(f"GRN UNIT: {GRN_unit}")
         # 3. do simulation for signal propagation within GRNs
         if GRN_unit == "whole":
             if use_randomized_GRN == False:
