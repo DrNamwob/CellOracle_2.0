@@ -528,7 +528,10 @@ def _get_network_score(filtered_linklist_df):
         df[f"degree_{i}"] = g.degree(mode=i)
         df[f"degree_centrality_{i}"] = df[f"degree_{i}"] / (df.shape[0]-1)
     df["betweenness_centrality"] = g.betweenness(directed=True, weights="weight")
-    df["eigenvector_centrality"] = g.eigenvector_centrality(directed=False, weights="weight")
+    
+  
+
+    df["eigenvector_centrality"] = g.eigenvector_centrality(directed=False, weights="weight") 
 
     # Use gene name for index
     df = df.set_index("name")
