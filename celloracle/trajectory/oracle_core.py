@@ -17,8 +17,7 @@ from ..utility.hdf5_processing import dump_hdf5, load_hdf5
 
 from sklearn.neighbors import NearestNeighbors
 
-# DB commented out sankey for now.  Surperfluous plotting functions galore here.
-#from .sankey import sankey
+
 from .markov_simulation import _walk
 from .oracle_utility import (_adata_to_matrix, _adata_to_df,
                              _adata_to_color_dict, _get_clustercolor_from_anndata,

@@ -640,7 +640,7 @@ class modified_VelocytoLoom():
         diffused: np.ndarray
             The probability to be found at any of the states
         """
-        self.prepare_markov_simulation()
+        #self.prepare_markov_simulation()
 
         if starting_p is None:
             starting_p = np.ones(self.tr.shape[0]) / self.tr.shape[0]

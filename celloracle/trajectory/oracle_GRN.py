@@ -15,7 +15,7 @@ from sklearn.linear_model import Ridge
 from tqdm.auto import tqdm
 
 from ..utility import intersect
-#from network_fitting import TransNet as tn
+
 
 
 

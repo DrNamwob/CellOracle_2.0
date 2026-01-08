@@ -21,8 +21,7 @@ from igraph import Graph
 
 from ..utility.hdf5_processing import dump_hdf5, load_hdf5
 
-from .use_r_scripts import (_get_network_score_by_Rscripts_inparallel,
-                            _check_R_libraries_installation)
+
 from .network_structure_analysis import (plot_degree_distributions,
                                          plot_score_discributions,
                                          plot_network_entropy_distributions)
@@ -30,9 +29,8 @@ from .network_structure_analysis import (plot_degree_distributions,
 from .gene_analysis import (plot_scores_as_rank,
                             plot_score_comparison_2D,
                             plot_score_comparison_2D_with_plotly,
-                            plot_score_per_cluster,
-                            plot_cartography_scatter_per_cluster,
-                            plot_cartography_term)
+                            plot_score_per_cluster)
+
 
 def load_links(file_path):
     """
@@ -366,72 +364,8 @@ class Links():
 
         plot_score_per_cluster(links=self, goi=goi, save=save, plt_show=plt_show)
 
-    # def plot_cartography_scatter_per_cluster(self, gois=None, clusters=None,
-    #                                          scatter=True, kde=False,
-    #                                          auto_gene_annot=False, percentile=98,
-    #                                          args_dot={"n_levels": 105}, args_line={"c":"gray"},
-    #                                          args_annot={}, save=None):
-
-    #     """
-    #     Make a gene network cartography plot.
-    #     Please read the original paper describing gene network cartography for more information.
-    #     https://www.nature.com/articles/nature03288
-
-    #     Args:
-    #         links (Links): See network_analysis.Links class for detail.
-    #         gois (list of srt): List of gene name to highlight.
-    #         clusters (list of str): List of cluster name to analyze. If None, all clusters in Links object will be analyzed.
-    #         scatter (bool): Whether to make a scatter plot.
-    #         auto_gene_annot (bool): Whether to pick up genes to make an annotation.
-    #         percentile (float): Genes with a network score above the percentile will be shown with annotation. Default is 98.
-    #         args_dot (dictionary): Arguments for scatter plot.
-    #         args_line (dictionary): Arguments for lines in cartography plot.
-    #         args_annot (dictionary): Arguments for annotation in plots.
-    #         save (str): Folder path to save plots. If the folder does not exist in the path, the function creates the folder.
-    #            Plots will not be saved if [save=None]. Default is None.
-
-    #     """
-    #     warnings.warn(
-    #         "This is the deprecated function. This function will be removed in the future version.",
-    #         DeprecationWarning
-    #     )
-
-    #     if "role" not in self.merged_score.columns:
-    #         print("Cartography is not calculated yet. Please run 'get_score' first. This function require several R libraries.")
-    #         return None
-
-    #     plot_cartography_scatter_per_cluster(links=self, gois=gois, clusters=clusters,
-    #                                          scatter=scatter, kde=kde,
-    #                                          auto_gene_annot=auto_gene_annot, percentile=percentile,
-    #                                          args_dot=args_dot, args_line=args_line,
-    #                                          args_annot=args_annot, save=save)
-
-    # def plot_cartography_term(self, goi, save=None, plt_show=True):
 
 
-    #     """
-    #     Plot the gene network cartography term like a heatmap.
-    #     Please read the original paper of gene network cartography for the principle of gene network cartography.
-    #     https://www.nature.com/articles/nature03288
-
-    #     Args:
-    #         links (Links): See network_analysis.Links class for detail.
-    #         gois (list of srt): List of gene name to highlight.
-    #         save (str): Folder path to save plots. If the folder does not exist in the path, the function creates the folder.
-    #            Plots will not be saved if [save=None]. Default is None.
-    #     """
-    #     warnings.warn(
-    #         "This is the deprecated function. This function will be removed in the future version.",
-    #         DeprecationWarning
-    #     )
-
-    #     if "role" not in self.merged_score.columns:
-    #         print("Cartography is not calculated yet. Please run 'get_score' first. This function require several R libraries.")
-    #         return None
-
-
-
-    #     plot_cartography_term(links=self, goi=goi, save=save, plt_show=plt_show)
 
 
 def _link2mat(link, value="coef_abs", fillna=0):
