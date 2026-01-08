@@ -96,9 +96,9 @@ def draw_network(linkList, return_graph=False):
         Graph object: Network X graph objenct.
     """
     G = linkList_to_networkgraph(linkList)
-    # レイアウトの取得
+    # レイアウトの取得 # Get the layout
     pos = nx.spring_layout(G)
-    # 可視化
+    # 可視化 # Visualization
     #nx.draw_networkx_edges(G, pos)
     nx.draw(G, pos,edge_color='black',width=1,linewidths=1,\
 node_size=500,node_color='pink',alpha=0.9,arrowstyle='->',

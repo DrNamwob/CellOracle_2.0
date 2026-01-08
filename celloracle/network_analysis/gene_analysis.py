@@ -141,118 +141,118 @@ def plot_score_comparison_2D(links, value, cluster1, cluster2, percentile=99, an
 
 
 
-def _test_ver_plot_score_comparison_2D(links, value, cluster1, cluster2, percentile=99,
-                             annot_shifts=None, save=None, fillna_with_zero=True,
-                             plot_line=True, threshold = 0.25, figsize=(4, 4)):
-    from adjustText import adjust_text
+# def _test_ver_plot_score_comparison_2D(links, value, cluster1, cluster2, percentile=99,
+#                              annot_shifts=None, save=None, fillna_with_zero=True,
+#                              plot_line=True, threshold = 0.25, figsize=(4, 4)):
+#     from adjustText import adjust_text
 
-    """
-    Make a scatter plot that shows the relationship of a specific network score in two groups.
+#     """
+#     Make a scatter plot that shows the relationship of a specific network score in two groups.
 
-    Args:
-        links (Links object): See network_analisis.Links class for detail.
-        value (srt): The network score to be shown.
-        cluster1 (str): Cluster nome to analyze. Network scores in the cluste1 are shown as x-axis.
-        cluster2 (str): Cluster nome to analyze. Network scores in the cluste2 are shown as y-axis.
-        percentile (float): Genes with a network score above the percentile will be shown with annotation. Default is 99.
-        annot_shifts ((float, float)): Shift x and y cordinate for annotations.
-        save (str): Folder path to save plots. If the folde does not exist in the path, the function create the folder.
-            If None plots will not be saved. Default is None.
-    """
-    def rotation_n45(s):
-        k = 1/np.sqrt(2)
-        x = k*(s[0] + s[1])
-        y = k*(-s[0] + s[1])
-        return x, y
+#     Args:
+#         links (Links object): See network_analisis.Links class for detail.
+#         value (srt): The network score to be shown.
+#         cluster1 (str): Cluster nome to analyze. Network scores in the cluste1 are shown as x-axis.
+#         cluster2 (str): Cluster nome to analyze. Network scores in the cluste2 are shown as y-axis.
+#         percentile (float): Genes with a network score above the percentile will be shown with annotation. Default is 99.
+#         annot_shifts ((float, float)): Shift x and y cordinate for annotations.
+#         save (str): Folder path to save plots. If the folde does not exist in the path, the function create the folder.
+#             If None plots will not be saved. Default is None.
+#     """
+#     def rotation_n45(s):
+#         k = 1/np.sqrt(2)
+#         x = k*(s[0] + s[1])
+#         y = k*(-s[0] + s[1])
+#         return x, y
 
-    def distance_(s):
-        x, y = rotation_n45(s)
-        return abs(y)
+#     def distance_(s):
+#         x, y = rotation_n45(s)
+#         return abs(y)
 
-    def rotation_p45(s):
-        k = 1/np.sqrt(2)
-        x = k*(s[0] - s[1])
-        y = k*(s[0] + s[1])
-        return x, y
+#     def rotation_p45(s):
+#         k = 1/np.sqrt(2)
+#         x = k*(s[0] - s[1])
+#         y = k*(s[0] + s[1])
+#         return x, y
 
-    def distance_1(s):
-        x, y = rotation_p45(s)
-        return abs(y)
+#     def distance_1(s):
+#         x, y = rotation_p45(s)
+#         return abs(y)
 
-    fig, ax = plt.subplots(figsize=figsize)
-    plt.subplots_adjust(left=0.15)
-    plt.subplots_adjust(bottom=0.15)
-
-
-    plt.ticklabel_format(style='sci',axis='y',scilimits=(0,0))
-    plt.ticklabel_format(style='sci',axis='x',scilimits=(0,0))
-
-    res = links.merged_score[links.merged_score.cluster.isin([cluster1, cluster2])][[value, "cluster"]]
-    res = res.reset_index(drop=False)
-    piv = pd.pivot_table(res, values=value, columns="cluster", index="index")
-    if fillna_with_zero:
-        piv = piv.fillna(0)
-    else:
-        piv = piv.fillna(piv.mean(axis=0))
-
-    # pick up genes with high score
-    goi1 = piv[piv[cluster1] > np.percentile(piv[cluster1].values, percentile)].index
-    goi2 = piv[piv[cluster2] > np.percentile(piv[cluster2].values, percentile)].index
-    gois = np.union1d(goi1, goi2)
+#     fig, ax = plt.subplots(figsize=figsize)
+#     plt.subplots_adjust(left=0.15)
+#     plt.subplots_adjust(bottom=0.15)
 
 
-    # plot lines
-    x, y = piv[cluster1], piv[cluster2]
-    if plot_line:
-        # y = x line
-        max_ = max(x.max(), y.max())
-        plt.plot((0, max_),(0, max_), linestyle=(0, (5, 10)), color="gray", linewidth=0.5)
-        # other lines
-        plt.plot((0, max_-threshold),(threshold, max_),
-                 linestyle="dashed", color="gray", linewidth=0.5, alpha=1)
-        plt.plot((threshold, max_), (0, max_-threshold),
-                 linestyle="dashed", color="gray", linewidth=0.5, alpha=1)
-        plt.plot((0, threshold),(threshold, 0),
-                    linestyle="dashed", color="gray", linewidth=0.5, alpha=1)
+#     plt.ticklabel_format(style='sci',axis='y',scilimits=(0,0))
+#     plt.ticklabel_format(style='sci',axis='x',scilimits=(0,0))
 
-    # plot all gene
-    plt.scatter(x, y, c="lightgray")
+#     res = links.merged_score[links.merged_score.cluster.isin([cluster1, cluster2])][[value, "cluster"]]
+#     res = res.reset_index(drop=False)
+#     piv = pd.pivot_table(res, values=value, columns="cluster", index="index")
+#     if fillna_with_zero:
+#         piv = piv.fillna(0)
+#     else:
+#         piv = piv.fillna(piv.mean(axis=0))
 
-    # plot genes that have high scores
-    piv["dis_"] = piv.apply(distance_1, axis=1).values
-    piv_ = piv[piv.dis_ >= threshold/np.sqrt(2)]
-    x, y = piv_[cluster1], piv_[cluster2]
-    plt.scatter(x, y, c="dimgray")
+#     # pick up genes with high score
+#     goi1 = piv[piv[cluster1] > np.percentile(piv[cluster1].values, percentile)].index
+#     goi2 = piv[piv[cluster2] > np.percentile(piv[cluster2].values, percentile)].index
+#     gois = np.union1d(goi1, goi2)
 
-    # plot genes that are differentially connected
-    piv_["dis"] = piv_.apply(distance_, axis=1).values
-    x, y = piv_[piv_.dis>=threshold/np.sqrt(2)][cluster1], piv_[piv_.dis>=threshold/np.sqrt(2)][cluster2]
-    gois = np.concatenate([gois, x.index])
-    plt.scatter(x, y, c="indianred")
 
-    # plot annotations
-    texts = []
-    gois = np.unique(gois)
-    for goi in gois:
-        x, y = piv.loc[goi, cluster1], piv.loc[goi, cluster2]
-        plt_text = ax.annotate(goi, (x, y), fontsize=8, color='black')
-        texts.append(plt_text)
+#     # plot lines
+#     x, y = piv[cluster1], piv[cluster2]
+#     if plot_line:
+#         # y = x line
+#         max_ = max(x.max(), y.max())
+#         plt.plot((0, max_),(0, max_), linestyle=(0, (5, 10)), color="gray", linewidth=0.5)
+#         # other lines
+#         plt.plot((0, max_-threshold),(threshold, max_),
+#                  linestyle="dashed", color="gray", linewidth=0.5, alpha=1)
+#         plt.plot((threshold, max_), (0, max_-threshold),
+#                  linestyle="dashed", color="gray", linewidth=0.5, alpha=1)
+#         plt.plot((0, threshold),(threshold, 0),
+#                     linestyle="dashed", color="gray", linewidth=0.5, alpha=1)
 
-    adjust_text(texts, arrowprops=dict(arrowstyle='-', color='dimgray', lw=0.5))
+#     # plot all gene
+#     plt.scatter(x, y, c="lightgray")
 
-    plt.xlabel(cluster1)
-    plt.ylabel(cluster2)
-    plt.title(f"{value}")
-    if not save is None:
-        os.makedirs(save, exist_ok=True)
-        path = os.path.join(save, f"values_comparison_in_{links.name}_{value}_{links.threshold_number}_{cluster1}_vs_{cluster2}.{settings['save_figure_as']}")
-        plt.savefig(path, transparent=True)
-    plt.show()
+#     # plot genes that have high scores
+#     piv["dis_"] = piv.apply(distance_1, axis=1).values
+#     piv_ = piv[piv.dis_ >= threshold/np.sqrt(2)]
+#     x, y = piv_[cluster1], piv_[cluster2]
+#     plt.scatter(x, y, c="dimgray")
 
-try:
-    import plotly.express as px
-except:
-    pass
+#     # plot genes that are differentially connected
+#     piv_["dis"] = piv_.apply(distance_, axis=1).values
+#     x, y = piv_[piv_.dis>=threshold/np.sqrt(2)][cluster1], piv_[piv_.dis>=threshold/np.sqrt(2)][cluster2]
+#     gois = np.concatenate([gois, x.index])
+#     plt.scatter(x, y, c="indianred")
+
+#     # plot annotations
+#     texts = []
+#     gois = np.unique(gois)
+#     for goi in gois:
+#         x, y = piv.loc[goi, cluster1], piv.loc[goi, cluster2]
+#         plt_text = ax.annotate(goi, (x, y), fontsize=8, color='black')
+#         texts.append(plt_text)
+
+#     adjust_text(texts, arrowprops=dict(arrowstyle='-', color='dimgray', lw=0.5))
+
+#     plt.xlabel(cluster1)
+#     plt.ylabel(cluster2)
+#     plt.title(f"{value}")
+#     if not save is None:
+#         os.makedirs(save, exist_ok=True)
+#         path = os.path.join(save, f"values_comparison_in_{links.name}_{value}_{links.threshold_number}_{cluster1}_vs_{cluster2}.{settings['save_figure_as']}")
+#         plt.savefig(path, transparent=True)
+#     plt.show()
+
+# try:
+#     import plotly.express as px
+# except:
+#     pass
 
 def plot_score_comparison_2D_with_plotly(links, value, cluster1, cluster2, fillna_with_zero=True):
     """
@@ -343,95 +343,95 @@ def plot_score_per_cluster(links, goi, save=None, plt_show=True):
         plt.show()
 
 
-###################
-### cartography ###
-###################
+# ###################
+# ### cartography ###
+# ###################
 
-def plot_cartography_scatter_per_cluster(links, gois=None, clusters=None,
-                                         scatter=False, kde=True,
-                                         auto_gene_annot=False, percentile=98,
-                                         args_dot={}, args_line={},
-                                         args_annot={}, save=None):
-    """
-    Plot gene network cartography in a scatter or kde plot.
-    Please read the original paper of gene network cartography for detail.
-    https://www.nature.com/articles/nature03288
+# def plot_cartography_scatter_per_cluster(links, gois=None, clusters=None,
+#                                          scatter=False, kde=True,
+#                                          auto_gene_annot=False, percentile=98,
+#                                          args_dot={}, args_line={},
+#                                          args_annot={}, save=None):
+#     """
+#     Plot gene network cartography in a scatter or kde plot.
+#     Please read the original paper of gene network cartography for detail.
+#     https://www.nature.com/articles/nature03288
 
-    Args:
-        links (Links object): See network_analisis.Links class for detail.
-        gois (list of srt): List of Gene name to highlight.
-        clusters (list of str): List of cluster name to analyze. If None, all clusters in Links object will be analyzed.
-        scatter (bool): Whether to make scatter plot.
-        auto_gene_annot (bool): Whether to pick up genes to make annotation.
-        percentile (float): Genes with a network score above the percentile will be shown with annotation. Default is 98.
-        args_dot (dictionary): Arguments for scatter plot.
-        args_line (dictionary): Arguments for lines in cartography plot.
-        args_annot (dictionary): Arguments for annoation in plots.
-        save (str): Folder path to save plots. If the folde does not exist in the path, the function create the folder.
-            If None plots will not be saved. Default is None.
-    """
-    if clusters is None:
-        clusters = links.cluster
+#     Args:
+#         links (Links object): See network_analisis.Links class for detail.
+#         gois (list of srt): List of Gene name to highlight.
+#         clusters (list of str): List of cluster name to analyze. If None, all clusters in Links object will be analyzed.
+#         scatter (bool): Whether to make scatter plot.
+#         auto_gene_annot (bool): Whether to pick up genes to make annotation.
+#         percentile (float): Genes with a network score above the percentile will be shown with annotation. Default is 98.
+#         args_dot (dictionary): Arguments for scatter plot.
+#         args_line (dictionary): Arguments for lines in cartography plot.
+#         args_annot (dictionary): Arguments for annoation in plots.
+#         save (str): Folder path to save plots. If the folde does not exist in the path, the function create the folder.
+#             If None plots will not be saved. Default is None.
+#     """
+#     if clusters is None:
+#         clusters = links.cluster
 
-    for cluster in clusters:
-        print(cluster)
-        data = links.merged_score[links.merged_score.cluster == cluster]
-        data = data[["connectivity", "participation"]]
-        #data = data[["within_module_degree", "participation_coefficient"]]
+#     for cluster in clusters:
+#         print(cluster)
+#         data = links.merged_score[links.merged_score.cluster == cluster]
+#         data = data[["connectivity", "participation"]]
+#         #data = data[["within_module_degree", "participation_coefficient"]]
 
-        if auto_gene_annot:
-            goi1 = data[data["connectivity"] > np.percentile(data["connectivity"].values, percentile)].index
-            goi2 = data[data["participation"] > np.percentile(data["participation"].values, percentile)].index
+#         if auto_gene_annot:
+#             goi1 = data[data["connectivity"] > np.percentile(data["connectivity"].values, percentile)].index
+#             goi2 = data[data["participation"] > np.percentile(data["participation"].values, percentile)].index
 
-            if gois is None:
-                gois_ = np.union1d(goi1, goi2)
-            else:
-                gois_ = np.union1d(gois, goi1)
-                gois_ = np.union1d(gois_, goi2)
-        else:
-            gois_ = gois
+#             if gois is None:
+#                 gois_ = np.union1d(goi1, goi2)
+#             else:
+#                 gois_ = np.union1d(gois, goi1)
+#                 gois_ = np.union1d(gois_, goi2)
+#         else:
+#             gois_ = gois
 
-        fig = plt.figure()
+#         fig = plt.figure()
 
-        plot_cartography_kde(data, gois_, scatter, kde,
-                             args_dot, args_line, args_annot)
-        plt.title(f"cartography in {cluster}")
-        plt.subplots_adjust(left=0.2, bottom=0.25)
+#         plot_cartography_kde(data, gois_, scatter, kde,
+#                              args_dot, args_line, args_annot)
+#         plt.title(f"cartography in {cluster}")
+#         plt.subplots_adjust(left=0.2, bottom=0.25)
 
-        if not save is None:
-            os.makedirs(save, exist_ok=True)
-            path = os.path.join(save, f"cartography_in_{links.name}_{links.threshold_number}_{cluster}.{settings['save_figure_as']}")
-            fig.savefig(path, transparent=True)
-        plt.show()
+#         if not save is None:
+#             os.makedirs(save, exist_ok=True)
+#             path = os.path.join(save, f"cartography_in_{links.name}_{links.threshold_number}_{cluster}.{settings['save_figure_as']}")
+#             fig.savefig(path, transparent=True)
+#         plt.show()
 
 
-def plot_cartography_term(links, goi, save=None, plt_show=True):
-    """
-    Plot the summary of gene network cartography like a heatmap.
-    Please read the original paper of gene network cartography for detail.
-    https://www.nature.com/articles/nature03288
+# def plot_cartography_term(links, goi, save=None, plt_show=True):
+#     """
+#     Plot the summary of gene network cartography like a heatmap.
+#     Please read the original paper of gene network cartography for detail.
+#     https://www.nature.com/articles/nature03288
 
-    Args:
-        links (Links object): See network_analisis.Links class for detail.
-        gois (list of srt): List of Gene name to highlight.
-        save (str): Folder path to save plots. If the folde does not exist in the path, the function create the folder.
-            If None plots will not be saved. Default is None.
-    """
-    print(goi)
-    tt = pd.get_dummies(links.merged_score[["cluster", "role"]],columns=["role"])
-    tt = tt.loc[goi].set_index("cluster")
-    tt.columns = [i.replace("role_", "") for i in tt.columns]
+#     Args:
+#         links (Links object): See network_analisis.Links class for detail.
+#         gois (list of srt): List of Gene name to highlight.
+#         save (str): Folder path to save plots. If the folde does not exist in the path, the function create the folder.
+#             If None plots will not be saved. Default is None.
+#     """
+#     print(goi)
+#     tt = pd.get_dummies(links.merged_score[["cluster", "role"]],columns=["role"])
+#     tt = tt.loc[goi].set_index("cluster")
+#     tt.columns = [i.replace("role_", "") for i in tt.columns]
 
-    order = ["Ultra peripheral", "Peripheral", "Connector","Kinless","Provincical Hub","Connector Hub", "Kinless Hub"]
+#     order = ["Ultra peripheral", "Peripheral", "Connector","Kinless","Provincical Hub","Connector Hub", "Kinless Hub"]
 
-    tt = tt.reindex(index=links.palette.index.values, columns=order).astype("float").fillna(0)
+#     tt = tt.reindex(index=links.palette.index.values, columns=order).astype("float").fillna(0)
 
-    sns.heatmap(data=tt, cmap="Blues", cbar=False)
-    if not save is None:
-        os.makedirs(save, exist_ok=True)
-        path = os.path.join(save,
-                           f"cartography_role_in_{links.name}_{links.threshold_number}_{goi}.{settings['save_figure_as']}")
-        plt.savefig(path, transparent=True)
+#     sns.heatmap(data=tt, cmap="Blues", cbar=False)
+#     if not save is None:
+#         os.makedirs(save, exist_ok=True)
+#         path = os.path.join(save,
+#                            f"cartography_role_in_{links.name}_{links.threshold_number}_{goi}.{settings['save_figure_as']}")
+#         plt.savefig(path, transparent=True)
 
-    if plt_show:
-        plt.show()
+#     if plt_show:
+#         plt.show()
